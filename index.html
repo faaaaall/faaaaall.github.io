@@ -249,24 +249,6 @@
         border: 0;
       }
 
-      .easter-egg-trigger {
-        position: fixed;
-        z-index: 4;
-        right: 0.65rem;
-        bottom: 0.65rem;
-        width: 0.8rem;
-        height: 0.8rem;
-        border: 1px solid #050505;
-        border-radius: 999px;
-        background: #050505;
-        opacity: 0.9;
-      }
-
-      .easter-egg-trigger:focus-visible {
-        outline: 2px solid var(--focus);
-        outline-offset: 3px;
-      }
-
       @media (max-width: 34rem) {
         .site {
           width: min(100% - 1.25rem, 44rem);
@@ -358,11 +340,6 @@
         </section>
       </div>
     </main>
-    <a
-      class="easter-egg-trigger"
-      href="posts/black-phillip/index.html"
-      aria-label="Abrir conteúdo oculto"
-    ></a>
     <script>
       const backgroundShade = document.querySelector(".background-shade");
       let readingFrame;
