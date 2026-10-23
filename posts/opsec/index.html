@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="olá a todos, hoje vou falar um pouco sobre OPSEC" />
+    <title>OPSEC — Faaaaall</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --page: #000;
+        --ink: #f6f6f6;
+        --muted: #d0d0d0;
+        --soft: rgba(255, 255, 255, 0.12);
+        --panel: rgba(0, 0, 0, 0.42);
+        --focus: #a8a7ff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+        background: var(--page);
+      }
+
+      body {
+        color: var(--ink);
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+
+      .article-page {
+        position: relative;
+        width: min(100% - 2rem, 72rem);
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: clamp(1.25rem, 4vw, 3rem) 0 5rem;
+      }
+
+      .back {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.75rem;
+        color: var(--ink);
+        font-weight: 650;
+        text-decoration: none;
+      }
+
+      .back:hover {
+        color: var(--focus);
+      }
+
+      .back:focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 3px;
+      }
+
+      article {
+        max-width: 70ch;
+        margin: clamp(3rem, 12vh, 8rem) auto 0;
+      }
+
+      .article-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) clamp(8rem, 17vw, 13rem);
+        align-items: start;
+        gap: clamp(1rem, 3vw, 2.5rem);
+      }
+
+      .article-layout > article {
+        min-width: 0;
+      }
+
+      .article-side-gif {
+        position: sticky;
+        top: 1.5rem;
+        width: 100%;
+        margin-top: clamp(3rem, 12vh, 8rem);
+      }
+
+      .article-side-gif img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: var(--ink);
+        line-height: 1.15;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 5vw, 3.6rem);
+      }
+
+      h2 {
+        margin: 3.8rem 0 1.15rem;
+        font-size: clamp(1.35rem, 3vw, 1.8rem);
+      }
+
+      h3 {
+        margin: 2.5rem 0 1rem;
+        font-size: 1.2rem;
+      }
+
+      .article-body {
+        margin-top: 2rem;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.8;
+      }
+
+      .article-body p {
+        margin: 0 0 1.25rem;
+      }
+
+      figure {
+        margin: 2rem 0;
+      }
+
+      figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--soft);
+        border-radius: 0.6rem;
+        background: #0a0a0a;
+      }
+
+      figure.meme {
+        width: min(100%, 18rem);
+        margin-inline: auto;
+      }
+
+      pre {
+        overflow-x: auto;
+        margin: 1.5rem 0;
+        border: 1px solid var(--soft);
+        border-radius: 0.6rem;
+        background: var(--panel);
+        padding: 1rem;
+        color: #ededed;
+        font: 0.91rem/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas,
+          monospace;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      p code {
+        border-radius: 0.25rem;
+        background: rgba(255, 255, 255, 0.09);
+        padding: 0.08em 0.3em;
+        color: #f5f5f5;
+        overflow-wrap: anywhere;
+      }
+
+      hr {
+        margin: 2rem 0;
+        border: 0;
+        border-top: 1px solid var(--soft);
+      }
+
+
+      .article-body h1 {
+        margin: 3.8rem 0 1.15rem;
+        font-size: clamp(1.45rem, 3vw, 2rem);
+      }
+
+      .article-body h4,
+      .article-body h5,
+      .article-body h6 {
+        margin: 2.25rem 0 0.9rem;
+        color: var(--ink);
+        line-height: 1.2;
+        font-size: 1.05rem;
+      }
+
+      .article-body a {
+        color: #c6c5ff;
+        text-underline-offset: 0.18em;
+      }
+
+      .article-body a:hover {
+        color: var(--ink);
+      }
+
+      .article-body ul,
+      .article-body ol {
+        margin: 0 0 1.5rem;
+        padding-left: 1.5rem;
+      }
+
+      .article-body li {
+        margin: 0.45rem 0;
+      }
+
+      .article-media video {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--soft);
+        border-radius: 0.6rem;
+        background: #0a0a0a;
+      }
+
+      @media (max-width: 48rem) {
+        .article-page {
+          width: min(100% - 1.25rem, 54rem);
+        }
+
+        .article-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .article-layout > article {
+          grid-row: 2;
+        }
+
+        .article-side-gif {
+          grid-row: 1;
+          position: static;
+          width: min(12rem, 50vw);
+          margin: 1.5rem 0 0 auto;
+        }
+
+      }
+
+      @media (max-width: 34rem) {
+        pre {
+          margin-inline: -0.1rem;
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="article-page">
+      <a class="back" href="../../#posts">← voltar</a>
+
+      <div class="article-layout">
+        <article>
+          <h1>OPSEC</h1>
+
+          <div class="article-body">
+<p>olá a todos, hoje vou falar um pouco sobre OPSEC
+sim, o famoso OPSEC, a ''privacidade'' absoluta, onde você esconde ou restringe suas informações pessoais ao extremo 
+ por que? ou você é doido ou tá devendo
+ ou só é lucido.. </p>
+<h2>SOCK PUPPET</h2>
+<p>essa é uma forma bem básica e simples de se praticar (ou até mesmo viver) dessa privacidade absoluta. é um meio imoral, porém eficaz. 
+ se baseia em mentir tudo sobre você, tanto nas redes sociais quanto para os seus amigos do zap, discord, etc</p>
+<h4>Por que é tão eficaz?</h4>
+<p>se o seu nome for Arthur e você se passar por Joaquim, claramente quem está atrás de você irá atrás do Joaquim. 
+fazendo isso você deixa um ''rastro falso''.. ou será que não? 
+veja, de fato é muito fácil se passar por outra pessoa, pegar fotos, videos e audios e mandar para seu servidorzinho do discord falando ''sou eu!'', mas não é facil realmente manter a persona que você criou. com o tempo, você pode começar a misturar hábitos, vocabulários, opiniões, nomes de usuário, etc.. 
+ é difícil quebra-la pois não se trata de uma camada de código, nem de uma conta privada que você não tem acesso... <strong>ou será que não?</strong></p>
+<h4>Engenharia Social</h4>
+<p>aqui entramos num tópico bem famoso, a tão dita ''Engenharia Social''. 
+trata-se da manipulação sobre um individuo, onde você induz ele a cometer algo ou falar algo que não devia (ou não se encaixa na persona)</p>
+<p>vamos pegar um exemplo simples em um cenário onde o atacante quer invadir o sistema de um cassino. 
+ao invés de invadir o computador diretamente, o atacante explora a confiança, medo ou urgência de quem realmente CONTROLA o computador </p>
+<p>Atacante: <strong>“aqui é do banco brasil, detectamos um problema na sua conta. precisamos do código enviado ao seu celular.”</strong></p>
+<p>ao entregar o código, a vitima poderá perder acesso a conta. </p>
+<p>e isso se aplica a <strong>Como quebrar uma Sock Puppet</strong>, pois ao criar um vinculo de afeto com o individuo, ele começará a misturar muito mais os hábitos pessoais com sua vida falsa, e em algum momento, ele irá ceder 
+pode levar dias ou meses, talvez até mais, mas ninguém vence do homem paciente </p>
+<h6>Curiosidade</h6>
+<p>ah, sobre o cenário que eu descrevi do cassino, saiba que foi um caso real! 
+em Setembro de 2024, o grupo hacker conhecido por ''Scattered Spider'' conseguiu invadir a rede corporativa dos dois maiores cassinos do mundo, a MGM Resorts e a Caesars Entertainment.</p>
+<h6>Como??</h6>
+<p>bem simples e resumindo, pesquisaram por funcionarios reais das empresas no Linkedin, e a partir disso se passaram pelos funcionarios no suporte tecnico da empresa, que por descuido, removeu a autenticação de dois fatores da conta ORIGINAL do empregado. 
+após isso, conseguiram ter acesso as camadas mais internas dos sistemas dos cassinos, injetaram um ransomware para criptografar informações, roubaram dados confidenciais de clientes e funcionarios, e pediram um resgate milionario para em criptomoedas para devolver o controle dos sistemas e não vazar tudo</p>
+<h2>Como viver no Anonimato</h2>
+<p>quer manter sua vida pessoal longe da internet? 
+ atente-se aos seus posts. não deixe que seja fácil para o atacante encontrar seu instagram pessoal ou plataforma de trabalho. separe seus nomes nas redes</p>
+<p>no discord: hackerzinho02x
+no instagram: @wellingtonbezerra </p>
+<p>também vale a pena revisar se você tem contas antigas ou se está deixando metadados nas fotos em que manda</p>
+<hr />
+<p>vale a pena definir de quem você está se escondendo para assim medir os esforços ou capacidades do atacante 
+  está se escondendo de um governo ou de um zé da esquina? 
+  um hacker com ferramentas ou alguém que sabe usar as ferramentas do jeito certo? </p>
+<hr />
+<h3>Proteja seus dados sensiveis!</h3>
+<p>não confie em qualquer site da internet, pois muitos foram ou serão vazados. 
+confie apenas nos que forem realmente essenciais. </p>
+<p>não passe seu CPF, RG, Certidões, etc,  para qualquer site, tenha cautela, pois boa parte destes sites (ressalva nos que não são empresas grandes, como mercado livre, amazon, etc) estão aptos a terem seus dados vazados (ou até vendidos, né facebook)</p>
+<hr />
+<h3>Persona Digital</h3>
+<p>crie uma persona que funcionará apenas para internet, e tenha certeza de que elas não se cruzem nunca com sua vida pessoal. </p>
+<hr />
+<h3>Isolamento de Contas</h3>
+<p>nunca use a mesma senha ou email variás vezes, tenha vários, se possivel até temporarios. 
+um bom método de isolamento é ter varios emails, cada um destinado a uma coisa especifica da sua vida</p>
+<p>1º Email: guarda todos os dados pessoais sensiveis que você tem, nele ficam as contas principais e pessoais. 
+<strong>Apenas use-o em sites que você realmente tem certeza que são confiáveis</strong></p>
+<p>2º Email: não guarda nenhum dado sensivel, mas é usado para redes sociais e sites de entretenimento</p>
+<p>3º Email: basicamente o email lixão. use-o de qualquer modo, faça qualquer coisa com ele, já que nele não tera nenhuma informação pessoal sobre você. </p>
+<hr />
+<h1>OPSEC de Rede e Conectividade</h1>
+<p>use redes descentralizadas, como <a href="https://www.torproject.org/">Tor</a> ou <a href="https://i2p.net/">I2P</a>
+sempre se atente com seu IP, faça uso de VPNs comerciais e sem registros encadeadas, como 
+o <a href="https://mullvad.net/">Mullvad</a>, <a href="https://protonvpn.com/">Proton VPN</a>, <a href="https://www.ivpn.net/">IVPN</a> ou <a href="https://nordvpn.com/">Nord VPN</a>.
+é importante ressaltar que usar uma VPN não garante anonimato sozinha, já que ''nologs'' não significa ausência total de dados. Pagamentos, suporte e informações da sua conta podem continuar armazenados. </p>
+<p>ainda assim, as 2 melhores para privacidade são o <strong>Mullvad</strong> e o <strong>Proton VPN</strong>.</p>
+<hr />
+<h2>Browser Fingerprint</h2>
+<p>mitigação de rastreamento baseado na resolução da sua tela, fontes instaladas, extensões e GPU.</p>
+<ul>
+<li>ative a proteçao contra fingerprinting nas configurações de privacidade do navegador</li>
+<li>bloqueie cookies de terceiros e rastreadores</li>
+<li>evite instalar muitas extensões, já que uma combinação incomum torna voce identificavel</li>
+<li>não altere manualmente <code>user-agent</code>, resolução, fontes ou informações da GPU — isso pode deixar sua configuração ainda mais unica</li>
+<li>evite usar tela cheia; mantenha um tamanho de janela comum</li>
+<li>não instale fontes desnecessarias</li>
+<li>mantenha o navegador e sistema atualizados</li>
+<li>use perfis separados para atividades diferentes e não entre nas mesmas contas pessoais</li>
+<li>limpe cookies e dados dos sites ao encerrar ao terminar de usar seu pc</li>
+</ul>
+<p>a ideia não é fornecer informações falsas aleatórias, mas sim fazer com que seu navegador pareça o maximo com o maior grupo possivel de usuarios. 
+basicamente, você vai se camuflar no meio de muitos outros usuarios </p>
+<p><strong>Navegadores que prezam realmente pela sua privacidade:</strong></p>
+<p><a href="https://librewolf.net/">LibreWolf</a>, <a href="https://www.firefox.com/">Firefox</a>, <a href="https://duckduckgo.com/">DuckDuckGo</a>. e para você que quer comodidade mas ainda sim preza pela privacidade, eu recomendaria o <a href="https://brave.com/">Brave</a>.</p>
+<hr />
+<h2>Vazamento de Metadados da Rede</h2>
+<p>controle vazamentos de DNS, WebRTC, e trafego IPv6 
+um vazamentos de metadados de rede acontece quando parte da conexao revela informações fora do canal de proteção usado
+um DNS Leak acontece quando as consultas que traduzem nomes de sites em endereços IP são enviadas ao provedor de internet, mesmo com uma VPN ligada
+O WebRTC (recurso usado em chamadas e comunicação pelo navegador) pode revelar endereços IP em certas configurações
+ja o vazamento de IPv6 acontece quando a VPN protege apenas o tráafego IPv4, e o trafego IPv6 sai diretamente pela conexão normal</p>
+<p>para contornar isso é simples, basta ativar na VPN que você está usando as opções de <strong>DNS Leak Protection</strong> e <strong>Kill Switch</strong>, fazendo com que ela use apenas os próprios servidores DNS. </p>
+<h5>O que cada um faz??</h5>
+<p>Kill Switch = bloqueia a internet caso o tunel da VPN caia, impedindo que consultas e trafego saiam pela conexão normal</p>
+<p>DNS Leak Protection = ative na VPN as opções DNS Leak Protection, deixando-a utilizar os proprios servidores DNS</p>
+<p>para o WebRTC, procure nas configurações de privacidade algo que impeça conexões WebRTC fora do proxy ou da VPN
+(desativar ele funciona, mas pode quebrar as chamadas)</p>
+<p>no caso do IPv6, o ideal mesmo seria usar uma VPN que ofereça suporte completo a ele.
+mas, caso a VPN proteja apenas IPv4, você pode desativar temporariamente o IPv6 no seu adaptador de rede do sistema (pode ocasionar problemas em algumas redes).
+teste as conexões em serviços como <a href="https://browserleaks.com/">BrowserLeaks</a> ou <a href="https://ipleak.net/">IPLeak</a>. 
+o IP e o DNS exibidos devem pertencer a conexão que está protegida, não ao seu provedor residencial.
+   (basicamente, lá deve aparecer que você está conectado no cu de judas, e não em xique xique bahia)</p>
+<hr />
+<h2>Segurança Wi-Fi e MAC</h2>
+<p>faça uso do MAC Spoofing para mascarar o endereço fisico da sua placa de rede (MAC).
+nunca use redes publicas sem camadas extras de proteção. </p>
+<hr />
+<h2>Analise de Tráfego</h2>
+<p>para evitar com que sua atividade não seja monitorada, utilize conexões criptografadas e/ou serviços que ofereçam ofuscação, preenchimento de pacotes e variação de tempo. 
+fazendo isso os pacotes ficam mais parecidos em tamanho e menos previsiveis, dificultando a identificação da atividade apenas pelo volume e horário</p>
+<hr />
+<h1>Hardware e OS</h1>
+<p>faça uso de sistemas operacionais baseados em RAM (fazendo isso haverá 0 rastros após desligar)
+se o seu foco é o OS citado anteriormente, use o <a href="https://tails.net/install/index.en.html">TailsOS</a>.
+ou pode se usar uma OS baseada em virtualização isolada (ou seja, usar maquina virtual).</p>
+<p>baixe a maquina virtual: <a href="https://www.virtualbox.org/">VirtualBox</a>
+baixe a OS: <a href="https://www.qubes-os.org/downloads/">QubesOS</a>, <a href="https://www.whonix.org/wiki/Download">Whonix</a></p>
+<h6>Curiosidade</h6>
+<p>sabia que a VPN do Mullvad opera do mesmo modo que um sistema operacional baseado em RAM? no dia 18 de abril de 2023. a policia sueca entrou no escritorio da Mullvad, em Gotemburgo, com um mandado de busca para apreender computadores que pudessem ter dados de clientes. isso aconteceu por um pedido das autoridades Alemãs, que devido a uma investigação sobre um ataque de extorsão cibernetica, pistas levaram a IPs da Mullvad. </p>
+<p>acabou que a policia saiu sem nada, pois os dados que a mullvad contém simplesmente não existem em seus sistemas. no momento em que o processador processa as chaves de criptografia e os tuneis dos usuarios, ele joga para a RAM. 
+tudo sobre o usuario, o tunel, a chave de criptografia fica la na RAM, e quando ele desliga, a RAM desliga e apaga todos os dados, reduzindo muito a possibilidade de recuperação</p>
+<hr />
+<h2>Telemetria de Software</h2>
+<p>desativação de relatorios automaticos de erros, rastreamento de sistemas (como windows, android e iOS) e pesquisas de hardware. </p>
+<hr />
+<h2>Criptografia de Disco Completo</h2>
+<p>use ferramentas de criptografia forte, como: <a href="https://www.veracrypt.jp/en/Downloads.html">Veracrypt</a> e <a href="https://gitlab.com/cryptsetup/cryptsetup/-/tags">LUKS</a>
+tem o <a href="https://support.microsoft.com/en-us/windows/security/encryption/bitlocker-overview">BitLocker</a>, ele pertence a Microsoft e vem integrado no Windows, então cabe a você decidir se confia ou não. 
+porém se for usar ele, usa sem nuvem, com uma chave de recuperação local</p>
+<hr />
+<h2>Hardening de Dispositivos</h2>
+<p>desativação fisica de bluetooth, localização, microfones e cameras integradas em celulares e computadores</p>
+<h6>Desativação dos coprocessadores ocultos das CPUs (Back-Door)</h6>
+<p><a href="https://github.com/corna/me_cleaner/wiki/HAP-AltMeDisable-bit">Bit HAP</a> = a forma mais limpa de desativar o <strong>Intel ME</strong>
+<a href="https://github.com/corna/me_cleaner">me_cleaner</a> = ferramenta criada pela comunidade para corromper quase todo o codigo do intel ME</p>
+<p><strong>O que é Intel ME?</strong>
+é um pequeno computador presente nos chipsets das motherboards da Intel desde 2008.
+ele roda o proprio sistema operacional e um firmware independente do windows ou de qualquer outro sistema que você use</p>
+<p><strong>O que é alarmante?</strong>
+a presença do Intel ME permite com que equipes de TI de empresas acessem, atualizem, liguem, desliguem ou configurem computadores a distancia, mesmo se a maquina estiver desligada 
+  (ligada na tomada e a rede)
+eles tem um nivel de privilegio superior ao proprio kernel da sua OS, tendo acesso direto a memoria, teclado, tela e rede.
+fica ligado 24 horas por dia, consumindo energia da placa mae enquanto estiver conectada a tomada
+ é alarmante também pois o código que roda dentro dele é fechado e nunca foi totalmente documentado pela Intel </p>
+<hr />
+<h3>Bit HAP - O que faz?</h3>
+<p>no firmware, quando um bit chamado HAP é ativado, o Intel ME faz a checagem inicial de energia da placa mãe, e logo em seguida desliga a si mesmo</p>
+<h3>me_cleaner - O que faz?</h3>
+<p>essa ferramenta apaga e corrompe quase todo o codigo do Intel ME gravados no chip da BIOS,  deixando apenas a linha de codigo minima essencial (de 90 kB a 300 kb) exigida para o computador dar boot e não desligar sozinho depois de 30 minutos</p>
+<p><strong>O risco:</strong> 
+modificar o firmware da BIOS diretamente exige conhecimento bem avançado, e muitas vezes requer um gravador fisico de circuitos (como um raspberry pi ou pinça SOIC-8) conectado diretamente a placa mãe, e qualquer erro pode brickar o computador</p>
+<hr />
+<h1>Comunicação Segura</h1>
+<h4>Criptografia de Ponta a Ponta (E2EE)</h4>
+<p>são plataformas que não exigem metadados associados, sendo elas: </p>
+<p><a href="https://getsession.org/download">Session</a> = app de mensagens que não exige numero de telefone nem email
+você recebe um ''Session ID'' para adicionar as pessoas. as mensagens são criptografadas e passam por uma rede descentralizada, com foco em esconder metadados (perdeu em vorcaro)</p>
+<p><a href="https://simplex.chat/en/downloads/">SimpleX Chat</a> = também é um app de mensagens criptografado, porém não cria um identificador permanente (ID) para o usuario. para conversar, você compartilha um link ou QR Code.</p>
+<p><a href="https://molly.im/get.html">Molly (Versão modificada do Signal)</a> = versão independente e reforçada do Signal para Android. usa a rede do Signal (outro app de mensagens focado em privacidade), mas adiciona recursos como banco de dados protegido por senha, bloqueio automatico, notificações sem Google e limpeza de informações sensiveis da memoria RAM.</p>
+<hr />
+<h2>Principio Zero-Knowledge</h2>
+<p>quando o provedor da nuvem não consegue ler seus dados criptografados, para aplicar este principio, criptografe os arquivos do seu aparelho antes de envia-los para a nuvem.
+assim, Google Drive, OneDrive ou Dropbox recebem apenas os dados embaralhados. </p>
+<ul>
+<li>crie um cofre criptografado usando <a href="https://cryptomator.org/downloads/">Cryptomator</a> ou <a href="https://www.veracrypt.jp/en/Downloads.html">Veracrypt</a></li>
+<li>coloque esse cofre dentro da pasta sincronizada com a nuvem</li>
+<li>use uma senha forte e guarde a chave de recuperação fora da internet (papelzinho ou usb)</li>
+<li>ative autenticação de dois fatores na conta da nuvem</li>
+<li>é bom manter uma cópia local criptografada como backup</li>
+</ul>
+<hr />
+<h2>Wiping</h2>
+<p>wiping consiste na destruição dos seus dados. 
+sobrescrita de dados em discos rigidos e SSDs, para impedir a recuperação de alguma equipe forense de arquivos deletados</p>
+<p><strong>Atenção: quebrar um HD não impede que ele consiga ser recuperado</strong></p>
+<p>para realmente impedir que um HD consiga ser recuperado, procure os Discos Internos, mais conhecidos como Platters, pois é la que os dados ficam realmente gravados</p>
+<figure class="article-media article-video"><video controls preload="metadata" src="../../assets/posts/opsec/hard-drive-destruction.mp4"></video></figure>
+<p><strong>Tradução:</strong>
+use um martelo e uma chave de fenda para perfurar os componentes do HD
+isto vai quebrar o Platter 
+o som será como de um chocalho se você tiver sucesso </p>
+<p>alguns Platters são de metal e não se partirão totalmente, mas se você perfurar todo o HD de uma ponta para a outra com a chave de fenda, o resultado será o mesmo </p>
+<p>localização do Disco Interno (Platter)</p>
+<figure class="article-media"><img src="../../assets/posts/opsec/platter-location.png" alt="" /></figure>
+
+<hr />
+<h1>Rastro de Dinheiro</h1>
+<p>de preferencias a moedas de privacidade, XMR e Monero.
+faça uso dos criptoativos criptografados por padrão em nivel de blockchain 
+ambas são moedas que ocultam automaticamente a informação de quem enviou, quem recebeu e qual foi o valor transferido</p>
+<p>isso ajuda a evitar que qualquer pessoa consulte a blockchain e descubra seu saldo ou acompanhe suas transações
+mesmo assim, não garante anonimato absoluto: corretoras e endereço IP podem revelar sua identidade</p>
+<h3>Uso de Dinheiro em especie</h3>
+<p>também de preferencia a dinheiro em especie, como notas fisicas, cartões virtuais mascarados que aceitam cartoes de presente comprados anonimamente, ou se você realmente estiver desesperado, compra um laranja no telegram (é crime obvio)</p>
+<hr />
+<p>isso foi tudo pessoal, espero que tenham gostado do get ready with me pra ser um psicotico por privacidade
+um agradecimento especial ao <code>zaack1337</code> por ter me dado a ideia de trazer este conteudo pra vocês</p>
+<p>obrigado por ter lido </p>
+          </div>
+        </article>
+
+        <aside class="article-side-gif" aria-hidden="true">
+          <img src="../../assets/posts/opsec/genshiken-ohno.gif" alt="" />
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
